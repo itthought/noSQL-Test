@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+ xmlns:context="http://www.springframework.org/schema/context"
+ xsi:schemaLocation="
+   http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+   http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd"> 
+ <context:property-placeholder location="classpath:memcache.properties"/>
+ <bean id="memcachedSockIOPool" class="com.danga.MemCached.SockIOPool" init-method="initialize" factory-method="getInstance" autowire-candidate="true">
+		<constructor-arg type="java.lang.String" value="${memcache.poolname}"/>
+		<property name="servers">
+			<list>
+				<value type="java.lang.String">${memcache.server.ip}:${memcache.server.port}</value>
+			</list>
+		</property>
+		<property name="initConn" value="${memcache.initConn}"/>
+		<property name="minConn" value="${memcache.minConn}"/>
+		<property name="maxConn" value="${memcache.maxConn}"/>
+		<property name="maxIdle" value="${memcache.maxIdle}"/>
+		<property name="socketTO" value="${memcache.socketTO}"/>
+		<property name="socketConnectTO" value="${memcache.socketConnectTO}"/>
+		<property name="nagle" value="${memcache.nagle}"/>
+		<property name="maintSleep" value="${memcache.maintSleep}"/>
+	</bean>	
+	<bean id="memcache-initialize" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		<property name="targetObject"><ref local="memcachedSockIOPool"/></property>
+  		<property name="targetMethod"><value>initialize</value></property>
+	</bean>
+ <context:annotation-config />
+</beans>
